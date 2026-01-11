@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>💕 Love Calculator 💕</h1>
+            <p class="subtitle">Discover your love compatibility!</p>
+            
+            <form id="calculatorForm">
+                <div class="form-group">
+                    <label for="name1">Your Name:</label>
+                    <input 
+                        type="text" 
+                        id="name1" 
+                        placeholder="Enter your name" 
+                        required
+                        maxlength="50"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="name2">Partner's Name:</label>
+                    <input 
+                        type="text" 
+                        id="name2" 
+                        placeholder="Enter their name" 
+                        required
+                        maxlength="50"
+                    >
+                </div>
+
+                <button type="submit" class="btn">Calculate Love 💘</button>
+            </form>
+
+            <div id="resultContainer" class="result-container hidden">
+                <div class="result">
+                    <h2 id="resultMessage"></h2>
+                    <div class="percentage-display">
+                        <div class="percentage-circle">
+                            <span id="percentageValue">0%</span>
+                        </div>
+                    </div>
+                    <p id="resultDescription" class="result-description"></p>
+                    <div id="resultText" class="result-text"></div>
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="resetForm()">Try Again</button>
+            </div>
+
+            <div id="loadingContainer" class="loading-container hidden">
+                <div class="spinner"></div>
+                <p>Calculating your love percentage...</p>
+            </div>
+
+            <div id="errorContainer" class="error-container hidden">
+                <p id="errorMessage"></p>
+                <button type="button" class="btn btn-secondary" onclick="hideError()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love Calculator - Preview</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>💕 Love Calculator 💕</h1>
+            <p class="subtitle">Discover your love compatibility!</p>
+            
+            <form id="calculatorForm">
+                <div class="form-group">
+                    <label for="name1">Your Name:</label>
+                    <input 
+                        type="text" 
+                        id="name1" 
+                        placeholder="Enter your name" 
+                        required
+                        maxlength="50"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="name2">Partner's Name:</label>
+                    <input 
+                        type="text" 
+                        id="name2" 
+                        placeholder="Enter their name" 
+                        required
+                        maxlength="50"
+                    >
+                </div>
+
+                <button type="submit" class="btn">Calculate Love 💘</button>
+            </form>
+
+            <div id="resultContainer" class="result-container hidden">
+                <div class="result">
+                    <h2 id="resultMessage"></h2>
+                    <div class="percentage-display">
+                        <div class="percentage-circle">
+                            <span id="percentageValue">0%</span>
+                        </div>
+                    </div>
+                    <p id="resultDescription" class="result-description"></p>
+                    <div id="resultText" class="result-text"></div>
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="resetForm()">Try Again</button>
+            </div>
+
+            <div id="loadingContainer" class="loading-container hidden">
+                <div class="spinner"></div>
+                <p>Calculating your love percentage...</p>
+            </div>
+
+            <div id="errorContainer" class="error-container hidden">
+                <p id="errorMessage"></p>
+                <button type="button" class="btn btn-secondary" onclick="hideError()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('calculatorForm');
+        const resultContainer = document.getElementById('resultContainer');
+        const loadingContainer = document.getElementById('loadingContainer');
+        const errorContainer = document.getElementById('errorContainer');
+
+        // Love calculator algorithm (runs locally, no backend needed)
+        function calculateLovePercentage(name1, name2) {
+            const combined = (name1 + name2).toLowerCase();
+            let hash = 0;
+            
+            for (let i = 0; i < combined.length; i++) {
+                const char = combined.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            
+            const percentage = Math.abs(hash % 100) + 1;
+            
+            return {
+                percentage,
+                message: getMatchMessage(percentage),
+                description: getMatchDescription(percentage)
+            };
+        }
+
+        function getMatchMessage(percentage) {
+            if (percentage >= 90) return "🔥 MATCH MADE IN HEAVEN! 🔥";
+            if (percentage >= 80) return "❤️ TRUE LOVE! ❤️";
+            if (percentage >= 70) return "💕 GREAT CHEMISTRY! 💕";
+            if (percentage >= 60) return "💖 GOOD POTENTIAL! 💖";
+            if (percentage >= 50) return "💗 COULD WORK! 💗";
+            if (percentage >= 40) return "💓 MAYBE... 💓";
+            if (percentage >= 30) return "💞 TAKE A CHANCE! 💞";
+            if (percentage >= 20) return "😊 IT'S POSSIBLE... 😊";
+            if (percentage >= 10) return "😅 PERHAPS NOT... 😅";
+            return "😬 PROBABLY NOT 😬";
+        }
+
+        function getMatchDescription(percentage) {
+            if (percentage >= 90) return "You two are absolutely perfect for each other! Destiny clearly brought you together. Don't waste another moment!";
+            if (percentage >= 80) return "Wow! This is a genuinely strong connection. You have all the ingredients for a beautiful relationship!";
+            if (percentage >= 70) return "Excellent compatibility! You share many qualities that could lead to a wonderful romance.";
+            if (percentage >= 60) return "Good news! There's solid potential here. With effort and understanding, this could really blossom.";
+            if (percentage >= 50) return "The stars are moderately aligned. There's potential, but you'll need to work on understanding each other.";
+            if (percentage >= 40) return "It could go either way. Love requires work, but who knows? Miracles happen!";
+            if (percentage >= 30) return "There are some challenges ahead, but love conquers all. Give it a try!";
+            if (percentage >= 20) return "It's unlikely, but stranger things have happened. Never say never!";
+            if (percentage >= 10) return "This might be an uphill battle, but if you believe, anything is possible!";
+            return "The odds are not in your favor, but maybe you're each other's exception to the rule!";
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name1 = document.getElementById('name1').value.trim();
+            const name2 = document.getElementById('name2').value.trim();
+            
+            if (!name1 || !name2) {
+                showError('Please enter both names!');
+                return;
+            }
+            
+            if (name1.length < 2 || name2.length < 2) {
+                showError('Names must be at least 2 characters long!');
+                return;
+            }
+            
+            // Show loading state
+            form.classList.add('hidden');
+            resultContainer.classList.add('hidden');
+            errorContainer.classList.add('hidden');
+            loadingContainer.classList.remove('hidden');
+            
+            try {
+                // Simulate calculation delay
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                const data = calculateLovePercentage(name1, name2);
+                displayResult(data);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showError('An error occurred. Please try again!');
+            } finally {
+                loadingContainer.classList.add('hidden');
+            }
+        });
+
+        function displayResult(data) {
+            const { percentage, message, description } = data;
+            
+            // Animate percentage counting up
+            animatePercentage(0, percentage);
+            
+            document.getElementById('resultMessage').textContent = message;
+            document.getElementById('resultDescription').textContent = description;
+            
+            resultContainer.classList.remove('hidden');
+        }
+
+        function animatePercentage(start, end) {
+            const duration = 1500;
+            const startTime = Date.now();
+            
+            function update() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const current = Math.floor(start + (end - start) * progress);
+                
+                document.getElementById('percentageValue').textContent = current + '%';
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            update();
+        }
+
+        function showError(message) {
+            loadingContainer.classList.add('hidden');
+            form.classList.remove('hidden');
+            document.getElementById('errorMessage').textContent = message;
+            errorContainer.classList.remove('hidden');
+        }
+
+        function hideError() {
+            errorContainer.classList.add('hidden');
+        }
+
+        function resetForm() {
+            form.reset();
+            resultContainer.classList.add('hidden');
+            errorContainer.classList.add('hidden');
+            form.classList.remove('hidden');
+            document.getElementById('name1').focus();
+        }
+    </script>
+</body>
+</html>
